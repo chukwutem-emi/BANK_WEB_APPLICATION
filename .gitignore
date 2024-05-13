@@ -1,0 +1,8 @@
+# ignore all .env files
+*.env
+# ignore all __pycache__ files
+__pycache__/
+# ignore all migrations file
+migrations/
+# ignore all env files
+env/
