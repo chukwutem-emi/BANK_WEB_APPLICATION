@@ -3,13 +3,14 @@ from flask_file import app
 from model_file import Transaction, User, db, TransactionTypeEnum, Recipient
 import os
 from dotenv import load_dotenv
-from flask import request, make_response
+from flask import request, make_response, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import datetime
 from sqlalchemy import text as t
 import jwt
 from functools import wraps
+from sqlalchemy.exc import SQLAlchemyError
 
 
 
@@ -43,37 +44,69 @@ def token_required(f):
 
 @app.route("/user", methods=["POST"])
 def create_bank_account():
-    data=request.get_json()
-    hashed_password=generate_password_hash(password=data["password"], method="pbkdf2:sha256")
-    password=hashed_password
-    name=str(data["name"])
-    email_address=str(data["email_address"])
-    account_number=str(data["account_number"])
-    public_id=str(uuid.uuid4())
-    account_balance=float(data["account_balance"])
-    with db.engine.connect() as connection:
-        create_a_bank_account=t("INSERT INTO user(password, name, email_address, account_number, public_id, account_balance) VALUES(:password, :name, :email_address, :account_number, :public_id, :account_balance)")
-        connection.execute(create_a_bank_account, {"password":password, "name":name, "email_address":email_address, "account_number":account_number, "public_id":public_id, "account_balance":account_balance})
-        connection.commit()
-        return({"message": "Account created successfully!"}), 201
+    try:
+        data=request.get_json()
+        if not data:
+            abort(400, discription=f"Invalid input")
+        required_fields=["name", "password", "email_address", "account_number", "account_balance"]
+        for field in required_fields:
+            if field not in data:
+                abort(400, description=f"Missing required feild: {field}")
+        hashed_password=generate_password_hash(password=data["password"], method="pbkdf2:sha256")
+        password=hashed_password
+        name=str(data["name"])
+        email_address=str(data["email_address"])
+        account_number=str(data["account_number"])
+        public_id=str(uuid.uuid4())
+        account_balance=float(data["account_balance"])
+        with db.engine.connect() as connection:
+                create_a_bank_account=t("INSERT INTO user(password, name, email_address, account_number, public_id, account_balance) VALUES(:password, :name, :email_address, :account_number, :public_id, :account_balance)")
+                connection.execute(create_a_bank_account, {"password":password, "name":name, "email_address":email_address, "account_number":account_number, "public_id":public_id, "account_balance":account_balance})
+                connection.commit()
+                return({"message": "Account created successfully!"}), 201
+    except KeyError as k:
+        abort(400, description=f"Missing data: {str(k)}")
+    except ValueError as v:
+        abort(400, description=f"Invalid data: {str(v)}")
+    except SQLAlchemyError as s:
+        abort(400, description=f"Database Error: {str(s)}")
+    except Exception as e:
+        abort(400, description=f"An Unexpected error as occured: {str(e)}")
 
 
-    
+
 @app.route("/recipient", methods=["POST"])
 def sign_up():
-    data=request.get_json()
-    hashed_password=generate_password_hash(password=data["password"], method="pbkdf2:sha256")
-    recipient_name=str(data["recipient_name"])
-    password=hashed_password
-    recipient_public_id=str(uuid.uuid4())
-    recipient_account_number=str(data["recipient_account_number"])
-    recipient_account_balance=float(data["recipient_account_balance"])
-    with db.engine.connect() as connection:
-        create_an_account=t("INSERT INTO recipient(recipient_name, password, recipient_public_id, recipient_account_number, recipient_account_balance) VALUES(:recipient_name, :password, :recipient_public_id, :recipient_account_number, :recipient_account_balance)")
-        connection.execute(create_an_account, {"recipient_name":recipient_name, "password":password, "recipient_public_id":recipient_public_id, "recipient_account_number":recipient_account_number, "recipient_account_balance":recipient_account_balance})
-        connection.commit()
-        return({"message": "account created successfully!"}), 201
-        
+    try:
+        data=request.get_json()
+        if not data:
+            abort(400, discription=f"Invalid input")
+        required_fields=["recipient_name", "password", "recipient_account_number", "recipient_account_balance"]
+        for field in required_fields:
+            if field not in data:
+                abort(400, description=f"Missing required feild: {field}")
+        hashed_password=generate_password_hash(password=data["password"], method="pbkdf2:sha256")
+        recipient_name=str(data["recipient_name"])
+        password=hashed_password
+        recipient_public_id=str(uuid.uuid4())
+        recipient_account_number=str(data["recipient_account_number"])
+        recipient_account_balance=float(data["recipient_account_balance"])
+        with db.engine.connect() as connection:
+            create_an_account=t("INSERT INTO recipient(recipient_name, password, recipient_public_id, recipient_account_number, recipient_account_balance) VALUES(:recipient_name, :password, :recipient_public_id, :recipient_account_number, :recipient_account_balance)")
+            connection.execute(create_an_account, {"recipient_name":recipient_name, "password":password, "recipient_public_id":recipient_public_id, "recipient_account_number":recipient_account_number, "recipient_account_balance":recipient_account_balance})
+            connection.commit()
+            return({"message": "account created successfully!"}), 201
+    except KeyError as k:
+        abort(400, description=f"Missing data: {str(k)}")
+    except ValueError as v:
+        abort(400, description=f"Invalid data: {str(v)}")
+    except SQLAlchemyError as s:
+        abort(400, description=f"Database Error: {str(s)}")
+    except Exception as e:
+        abort(400, description=f"An Unexpected error as occured: {str(e)}")
+
+
+            
 
 
 @app.route("/recipient/<id>", methods=["DELETE"])

@@ -81,7 +81,7 @@ class Transaction(db.Model):
         """)'
     
 
-    app.app_context().push()
+    
 
 
 
