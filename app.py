@@ -270,7 +270,7 @@ def withdraw_money(current_user):
             money_withdrawer=t("INSERT INTO transaction(amount, user_id, transaction_type) VALUES(:amount, :user_id, :transaction_type)")
             connection.execute(money_withdrawer, {"amount":amount, "user_id":user[0], "transaction_type":TransactionTypeEnum.withdraw.value})
             connection.commit()
-            return f'Withdraw of {amount} by {name} was successful!', 200 
+            return f'Withdraw of {amount} by {name} was successful!, your balance is: {new_account_balance}', 200 
 
 
 
