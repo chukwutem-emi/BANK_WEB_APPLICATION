@@ -42,7 +42,7 @@ def token_required(f):
     return decorated
 
 
-@app.route("/user/create", methods=["POST"])
+@app.route("/register", methods=["POST"])
 def create_bank_account():
     try:
         data=request.get_json()
