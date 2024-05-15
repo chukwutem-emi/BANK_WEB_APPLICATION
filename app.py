@@ -20,7 +20,7 @@ Recipient()
 
 load_dotenv()
 
-app.config["SECRETE_KEY"] = os.environ.get("SECRET_KEY")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 def token_required(f):
     @wraps(f)
@@ -42,7 +42,7 @@ def token_required(f):
     return decorated
 
 
-@app.route("/user", methods=["POST"])
+@app.route("/user/create", methods=["POST"])
 def create_bank_account():
     try:
         data=request.get_json()
