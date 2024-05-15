@@ -216,6 +216,8 @@ def withdraw_money(current_user):
                 return({"message": "Bank account user not found!"}), 404
             account_balance=float(user[6])
             new_account_balance=account_balance - amount
+            if amount > account_balance:
+                return({"message":"Insufficient fund!"}), 400
             updating_account_user=t("UPDATE user SET account_balance=:new_account_balance WHERE name=:name")
             connection.execute(updating_account_user, {"new_account_balance":new_account_balance, "name":name})
             money_withdrawer=t("INSERT INTO transaction(amount, user_id, transaction_type) VALUES(:amount, :user_id, :transaction_type)")
@@ -229,7 +231,7 @@ def withdraw_money(current_user):
 @token_required
 def transfer_money(current_user):
     if not current_user:
-        return({"message": "You can't perform this operation!"}), 401
+        return({"message": "You are not authorize perform this operation!"}), 401
     data=request.get_json()
     amount=float(data["amount"])
     name=str(data["name"])
@@ -243,6 +245,8 @@ def transfer_money(current_user):
                 return({"message": "Bank account user not found!"}), 404
             account_balance=float(user[6])
             new_account_balance=account_balance - amount
+            if amount > account_balance:
+                return({"message":"Insufficient fund!"}), 400
             updating_account_user=t("UPDATE user SET account_balance=:new_account_balance WHERE name=:name")
             connection.execute(updating_account_user, {"new_account_balance":new_account_balance, "name":name})
             fetching_recipient=t("SELECT * FROM recipient WHERE recipient_account_number=:recipient_account_number")
