@@ -212,7 +212,6 @@ def deposit_money(current_user):
     name=str(data["name"])
     amount=float(data["amount"])
     # sender_name=str(data["sender_account_number"])
-    recipient_account_number=str(data["recipient_account_number"])
     if not name or not amount:
         return({"message": "Name, account_number and amount are required!"}), 400
     with db.engine.connect() as connection:
@@ -224,8 +223,8 @@ def deposit_money(current_user):
             new_account_balance=account_balance + amount
             updating_account_user=t("UPDATE user SET account_balance=:new_account_balance WHERE name=:name")
             connection.execute(updating_account_user, {"new_account_balance":new_account_balance, "name":name})
-            money_deposit=t("INSERT INTO transaction(amount, user_id, transaction_type, sender_name, recipient_account_number, recipient_id) VALUES(:amount, :user_id, :transaction_type, :sender_name, :recipient_account_number, :recipient_id)")
-            connection.execute(money_deposit, {"amount":amount, "user_id":user[0], "transaction_type":TransactionTypeEnum.deposit.value, "sender_name":user[1], "recipient_account_number":recipient_account_number, "recipient_id":user[0]})
+            money_deposit=t("INSERT INTO transaction(amount, user_id, transaction_type, sender_name) VALUES(:amount, :user_id, :transaction_type, :sender_name)")
+            connection.execute(money_deposit, {"amount":amount, "user_id":user[0], "transaction_type":TransactionTypeEnum.deposit.value, "sender_name":user[1]})
             connection.commit()
             return f'deposit of {amount} to {name} was successful!', 200 
 
