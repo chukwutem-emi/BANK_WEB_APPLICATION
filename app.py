@@ -20,7 +20,7 @@ Recipient()
 
 load_dotenv()
 
-app.config["SECRETE_KEY"] = os.environ.get("SECRETE_KEY")
+app.config["SECRETE_KEY"] = os.environ.get("SECRET_KEY")
 
 def token_required(f):
     @wraps(f)
@@ -32,7 +32,7 @@ def token_required(f):
         if not token:
             return({"message": "token is missing!. login to get an access token"}), 401
         try:
-            data=jwt.decode(jwt=token, key=app.config["SECRETE_KEY"], algorithms=["HS256"])
+            data=jwt.decode(jwt=token, key=app.config["SECRET_KEY"], algorithms=["HS256"])
             current_user=User.query.filter_by(public_id=data["public_id"]).first()
         except Exception as e:
             print("Error", e)
@@ -196,7 +196,7 @@ def login():
         return make_response("verification error!", {"WWW-Authenticate":"basic realm=login required"}), 401
     
     if check_password_hash(user.password, auth.password):
-        token=jwt.encode({"public_id":user.public_id, "exp":datetime.datetime.now(datetime.UTC)+datetime.timedelta(minutes=60)}, app.config["SECRETE_KEY"])
+        token=jwt.encode({"public_id":user.public_id, "exp":datetime.datetime.now(datetime.UTC)+datetime.timedelta(minutes=60)}, app.config["SECRET_KEY"])
         return({"Token":token})
         
     return make_response("error in verification!", {"WWW-Authenticate":"basic realm=login required"}), 401
