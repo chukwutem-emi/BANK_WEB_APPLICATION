@@ -206,27 +206,42 @@ def login():
 @app.route("/deposit", methods=["POST"])
 @token_required
 def deposit_money(current_user):
-    if not current_user:
-        return({"message": "You can't perform this operation!"}), 401
-    data=request.get_json()
-    name=str(data["name"])
-    amount=float(data["amount"])
-    # sender_name=str(data["sender_account_number"])
-    if not name or not amount:
-        return({"message": "Name, account_number and amount are required!"}), 400
-    with db.engine.connect() as connection:
-            fetching_account_user_details=t("SELECT * FROM user WHERE name=:name")
-            user=connection.execute(fetching_account_user_details, {"name":name}).fetchone()
-            if not user:
-                return({"message": "Bank account user not found!"}), 404
-            account_balance=float(user[6])
-            new_account_balance=account_balance + amount
-            updating_account_user=t("UPDATE user SET account_balance=:new_account_balance WHERE name=:name")
-            connection.execute(updating_account_user, {"new_account_balance":new_account_balance, "name":name})
-            money_deposit=t("INSERT INTO transaction(amount, user_id, transaction_type, sender_name) VALUES(:amount, :user_id, :transaction_type, :sender_name)")
-            connection.execute(money_deposit, {"amount":amount, "user_id":user[0], "transaction_type":TransactionTypeEnum.deposit.value, "sender_name":user[1]})
-            connection.commit()
-            return f'deposit of {amount} to {name} was successful!', 200 
+    try:
+        if not current_user:
+            return({"message": "You can't perform this operation!"}), 401
+        data=request.get_json()
+        if not data:
+            abort(400, discription="Invalid input")
+        required_fields=["name", "amount"]
+        for field in required_fields:
+            if field not in data:
+                abort(400, description=f"Missing required field: {field}")
+        name=str(data["name"])
+        amount=float(data["amount"])
+        # sender_name=str(data["sender_account_number"])
+        if not name or not amount:
+            return({"message": "Name, account_number and amount are required!"}), 400
+        with db.engine.connect() as connection:
+                fetching_account_user_details=t("SELECT * FROM user WHERE name=:name")
+                user=connection.execute(fetching_account_user_details, {"name":name}).fetchone()
+                if not user:
+                    return({"message": "Bank account user not found!"}), 404
+                account_balance=float(user[6])
+                new_account_balance=account_balance + amount
+                updating_account_user=t("UPDATE user SET account_balance=:new_account_balance WHERE name=:name")
+                connection.execute(updating_account_user, {"new_account_balance":new_account_balance, "name":name})
+                money_deposit=t("INSERT INTO transaction(amount, user_id, transaction_type, sender_name) VALUES(:amount, :user_id, :transaction_type, :sender_name)")
+                connection.execute(money_deposit, {"amount":amount, "user_id":user[0], "transaction_type":TransactionTypeEnum.deposit.value, "sender_name":user[1]})
+                connection.commit()
+                return f'deposit of {amount} to {name} was successful!', 200
+    except KeyError as k:
+        abort(400, discription=f"Missing data: {str(k)}")
+    except ValueError as V:
+        abort(400, discription=f"Invalid data: {str(V)}")
+    except SQLAlchemyError as s:
+        abort(400, discription=f"Database error: {str(s)}")
+    except Exception as e:
+        abort(400, discription=f"An error occured during your transaction: {str(e)}")
 
 
 
