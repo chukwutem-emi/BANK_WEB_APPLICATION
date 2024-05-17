@@ -95,7 +95,7 @@ def sign_up():
             create_an_account=t("INSERT INTO recipient(recipient_name, password, recipient_public_id, recipient_account_number, recipient_account_balance) VALUES(:recipient_name, :password, :recipient_public_id, :recipient_account_number, :recipient_account_balance)")
             connection.execute(create_an_account, {"recipient_name":recipient_name, "password":password, "recipient_public_id":recipient_public_id, "recipient_account_number":recipient_account_number, "recipient_account_balance":recipient_account_balance})
             connection.commit()
-            return({"message": "account created successfully!"}), 201
+            return({"message": "Account created successfully!"}), 201
     except KeyError as k:
         abort(400, description=f"Missing data: {str(k)}")
     except ValueError as v:
