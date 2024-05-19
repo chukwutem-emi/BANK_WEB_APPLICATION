@@ -47,14 +47,12 @@
 ## Login
 ### Endpoint: '/login'
 
-### Method: GET
-
-### Login using Username and Password
+### Method: POST
 
 ### Payload:
 ```json
-Username: ""
-Password: ""
+"Username": ""
+"Password": ""
 ```
 ### Response:
 ```json
@@ -68,7 +66,7 @@ Password: ""
 
 ### Method: GET
 
-### Reponse:
+### Response:
 ```json
 "Status":"200"
 {
@@ -103,11 +101,116 @@ Password: ""
 
 ## Fetch a user
 
-### Enpoint: '/user/public_id'
+### Endpoint: '/user/public_id'
 
 ### Method: GET
 
 ### Response:
 ```json
+"status":"",
+{
+    "user": {
+        "account_balance":,
+        "account_number": "",
+        "created_at": "",
+        "email_address": "",
+        "id": ,
+        "password": "",
+        "public_id": "",
+        "updated_at": "",
+        "username": ""
+    }
+}
+```
 
+## Update user information
+
+### Endpoint: '/user/public_id'
+
+### Method: PUT
+
+### Payload:
+```json
+"username":"",
+"email_address":"",
+"password":""
+```
+### Response:
+```json
+"status":"200"
+{
+    "message":"A bank user account details updated successfully!"
+}
+```
+## Delete a user account
+
+### Endpoint: '/user/public_id'
+
+### Method: DELETE
+
+### Response:
+```json
+"status": "200",
+{
+    "message":"user account deleted!"
+}
+```
+## Deposit
+
+### Endpoint: '/deposit'
+
+### Method: POST
+
+### Payload:
+```json
+"username":"",
+"account_number":"",
+"amount":""
+```
+### Response:
+```json
+"status":"200",
+{
+    "deposit of {amount} to {account_number} was successful!, your balance is: {new_account_balance}"
+}
+```
+## Withdraw
+
+### Endpoint: '/withdraw'
+
+### Method: POST
+
+### Payload:
+```json
+"username":"",
+"account_number":"",
+"amount":""
+```
+### Response:
+```json
+"status":"200",
+{
+    "Withdraw of {amount} by {username} was successful, your balance is: {new_account_balance}"
+}
+```
+## Transfer
+
+### Endpoint: '/transfer'
+
+### Method: POST
+
+### Payload:
+```json
+"amount":"",
+"username":"",
+"recipient_account_number": "",
+"recipient_username":"",
+"sender_name":""
+```
+### Response:
+```json
+"status":"200",
+{
+    "Transfer of {amount} to {recipient_account_number} was successful!, your balance is: {new_account_balance}"
+}
 ```

@@ -10,6 +10,7 @@ import enum
 
 
 
+
 load_dotenv()
 
 mysql=MySQL()
@@ -21,9 +22,9 @@ migrate=Migrate(app=app, db=db)
 class User(db.Model):
     __tablename__="user"
     id=db.Column(db.Integer, primary_key=True)
-    name=db.Column(db.String(100))
+    username=db.Column(db.String(100))
     email_address=db.Column(db.String(200), unique=True)
-    account_number=db.Column(db.String(14))
+    account_number=db.Column(db.String(14), unique=True)
     public_id=db.Column(db.String(200))
     password=db.Column(db.String(200))
     account_balance=db.Column(db.Float)
@@ -33,14 +34,14 @@ class User(db.Model):
 
     def __repr__(self):
         return f'User("""\
-        "{self.name}", "{self.email_address}", "{self.account_number}", "{self.public_id}", "{self.password}", "{self.account_balance}"\
+        "{self.username}", "{self.email_address}", "{self.account_number}", "{self.public_id}", "{self.password}", "{self.account_balance}"\
         """)'
     
 
 class Recipient(db.Model):
     __tablename__ = "recipient"
     id = db.Column(db.Integer, primary_key=True)
-    recipient_name = db.Column(db.String(100))
+    recipient_username = db.Column(db.String(100))
     recipient_public_id=db.Column(db.String(200))
     password=db.Column(db.String(200))
     recipient_account_number = db.Column(db.String(14), unique=True)
@@ -50,7 +51,7 @@ class Recipient(db.Model):
 
     def __repr__(self):
         return f'Recipient("""\
-        "{self.recipient_name}", "{self.customer_public_id}", "{self.password}", "{self.recipient_account_number}", "{self.recipient_account_balance}"\
+        "{self.recipient_username}", "{self.customer_public_id}", "{self.password}", "{self.recipient_account_number}", "{self.recipient_account_balance}"\
         """)'
 
 
@@ -64,8 +65,8 @@ class TransactionTypeEnum(enum.Enum):
 class Transaction(db.Model):
     __tablename__="transaction"
     id=db.Column(db.Integer, primary_key=True)
-    user_id=db.Column(db.Integer, db.ForeignKey("user.id", name="FK_transaction_user_id"))
-    recipient_id=db.Column(db.Integer, db.ForeignKey("recipient.id", name="FK_transaction_customer_id"))
+    user_id=db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
+    recipient_id=db.Column(db.Integer, db.ForeignKey("recipient.id", ondelete="CASCADE"))
     transaction_type=db.Column(db.Enum(TransactionTypeEnum), nullable=False)
     amount=db.Column(db.Float)
     sender_name=db.Column(db.String(14))
