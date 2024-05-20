@@ -99,7 +99,7 @@
 }
 ```
 
-## Fetch a user
+## Fetch a user/check user account details
 
 ### Endpoint: '/user/public_id'
 

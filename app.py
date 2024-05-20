@@ -13,7 +13,6 @@ from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 
 
-
 Transaction()
 User()
 Recipient()
@@ -156,7 +155,34 @@ def get_all_bank_account_users(current_user):
             output.append(user_data)
         return({"user":output}), 200
 
-   
+
+@app.route("/transaction", methods=["GET"])
+def get_transaction_details():
+    with db.engine.connect() as connection:
+        transaction_details=t("SELECT * FROM transaction")
+        transaction_data=connection.execute(transaction_details)
+        output=[]
+        for transaction in transaction_data:
+            output.append(transaction._asdict())
+
+        return({"Transaction details":output})
+    
+
+@app.route("/transaction/<id>", methods=["GET"])
+@token_required
+def get_an_account_transaction_details(current_user, id):
+    if not current_user:
+        return({"message": "Unauthorized!. Login required"}), 401
+    with db.engine.connect() as connection:
+        one_transaction_details=t("SELECT * FROM transaction WHERE id=:id")
+        user=connection.execute(one_transaction_details, {"id":id})
+        userRow=user.fetchone()
+        if not userRow:
+            return({"message": "Transaction details not found!"}), 404
+        data=userRow._asdict()
+        return({"Transaction":data}), 200
+    
+
 @app.route("/user/<public_id>", methods=["PUT"])
 @token_required
 def update_bank_user_account_details(public_id, current_user):
