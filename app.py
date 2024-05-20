@@ -164,8 +164,7 @@ def get_transaction_details():
         output=[]
         for transaction in transaction_data:
             output.append(transaction._asdict())
-
-        return({"Transaction details":output})
+        return({"Transaction details":output}), 200
     
 
 @app.route("/transaction/<id>", methods=["GET"])
