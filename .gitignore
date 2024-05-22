@@ -6,3 +6,5 @@ __pycache__/
 migrations/
 # ignore all env files
 env/
+# ignore .vscode file
+.vscode/

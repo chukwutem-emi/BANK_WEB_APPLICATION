@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_mysqldb import MySQL
 from flask_file import app
 import os
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, Boolean
 from sqlalchemy.sql import func
 import enum
 
@@ -28,33 +28,16 @@ class User(db.Model):
     public_id=db.Column(db.String(200))
     password=db.Column(db.String(200))
     account_balance=db.Column(db.Float)
+    Admin=db.Column(Boolean, default=False)
     created_at=db.Column(DateTime(timezone=True), server_default=func.now())
     updated_at=db.Column(DateTime(timezone=True), server_default=func.now())
 
 
     def __repr__(self):
         return f'User("""\
-        "{self.username}", "{self.email_address}", "{self.account_number}", "{self.public_id}", "{self.password}", "{self.account_balance}"\
+        "{self.username}", "{self.email_address}", "{self.account_number}", "{self.public_id}", "{self.password}", "{self.account_balance}", "{self.Admin}"\
         """)'
     
-
-class Recipient(db.Model):
-    __tablename__ = "recipient"
-    id = db.Column(db.Integer, primary_key=True)
-    recipient_username = db.Column(db.String(100))
-    recipient_public_id=db.Column(db.String(200))
-    password=db.Column(db.String(200))
-    recipient_account_number = db.Column(db.String(14), unique=True)
-    recipient_account_balance = db.Column(db.Float)
-    created_at=db.Column(DateTime(timezone=True), server_default=func.now())
-    updated_at=db.Column(DateTime(timezone=True), server_default=func.now())
-
-    def __repr__(self):
-        return f'Recipient("""\
-        "{self.recipient_username}", "{self.customer_public_id}", "{self.password}", "{self.recipient_account_number}", "{self.recipient_account_balance}"\
-        """)'
-
-
 
 class TransactionTypeEnum(enum.Enum):
     deposit="deposit"
@@ -66,19 +49,17 @@ class Transaction(db.Model):
     __tablename__="transaction"
     id=db.Column(db.Integer, primary_key=True)
     user_id=db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
-    recipient_id=db.Column(db.Integer, db.ForeignKey("recipient.id", ondelete="CASCADE"))
     transaction_type=db.Column(db.Enum(TransactionTypeEnum), nullable=False)
     amount=db.Column(db.Float)
-    sender_name=db.Column(db.String(14))
     recipient_account_number=db.Column(db.String(14))
     created_at=db.Column(DateTime(timezone=True), server_default=func.now())
     user=db.relationship("User", backref=db.backref("transaction", lazy=True))
-    recipient=db.relationship("Recipient", backref=db.backref("transaction", lazy=True))
+    
     
 
     def __repr__(self):
         return f'Transaction("""\
-        "{self.amount}", "{self.user_id}", "{self.recipient_account_number}", "{self.sender_name}"\
+        "{self.amount}", "{self.user_id}", "{self.recipient_account_number}"\
         """)'
     
 

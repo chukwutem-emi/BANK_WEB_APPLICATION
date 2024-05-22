@@ -8,11 +8,10 @@
 ### Payload:
 ```json
 {
-    "name":"",
+    "username":"",
     "password":"",
     "email_address":"",
-    "account_number":"",
-    "account_balance":""
+    "account_number":""
 }
 ```
 
@@ -23,27 +22,6 @@
 "message": "Account created successfully!"
 }
 ```
-
-## sign_up
-### Endpoint: '/recipient'
-
-### method: POST
-
-### Payload:
-```json
-"recipient_name":"",
-"password":"",
-"recipient_account__number":"",
-"recipient_account_balance":""
-```
-
-### Response:
-```json
-"Status":"201",
-{
-"message":"Account created successfully!"
-}
-```
 ## Login
 ### Endpoint: '/login'
 
@@ -51,8 +29,10 @@
 
 ### Payload:
 ```json
-"Username": ""
-"Password": ""
+{
+    "username":"",
+    "password":""
+}
 ```
 ### Response:
 ```json
@@ -61,7 +41,7 @@
     "Token": ""
 }
 ```
-## Fetch all user
+## Fetch all user, only for admin 
 ### Endpoint: '/user'
 
 ### Method: GET
@@ -72,28 +52,22 @@
 {
     "user": [
         {
-            "account_balance": "",
-            "account_number": "",
-            "email_address": "",
-            "name": "",
-            "password": "",
-            "public_id": ""
-        },
-        {
+            "Admin": ,
             "account_balance": ,
             "account_number": "",
             "email_address": "",
-            "name": "",
             "password": "",
-            "public_id": ""
+            "public_id": "",
+            "username": ""
         },
         {
+            "Admin": ,
             "account_balance": ,
             "account_number": "",
             "email_address": "",
-            "name": "",
             "password": "",
-            "public_id": ""
+            "public_id": "",
+            "username": ""
         }
     ]
 }
@@ -110,11 +84,12 @@
 "status":"",
 {
     "user": {
-        "account_balance":,
+        "Admin": ,
+        "account_balance": ,
         "account_number": "",
         "created_at": "",
         "email_address": "",
-        "id": ,
+        "id": 1,
         "password": "",
         "public_id": "",
         "updated_at": "",
@@ -123,7 +98,7 @@
 }
 ```
 
-## Update user information
+## Update user details
 
 ### Endpoint: '/user/public_id'
 
@@ -131,9 +106,11 @@
 
 ### Payload:
 ```json
-"username":"",
-"email_address":"",
-"password":""
+{
+    "username":"",
+    "email_address":"",
+    "password":""
+}
 ```
 ### Response:
 ```json
@@ -142,7 +119,28 @@
     "message":"A bank user account details updated successfully!"
 }
 ```
-## Delete a user account
+## Promote a user to an Admin
+
+### Endpoint: "/admin/public_id
+
+### Method: PUT
+
+### Payload:
+```json
+{
+    "username":"",
+    "email_address":"",
+    "password":""
+}
+```
+### Response:
+```json
+"status":"200"
+{
+    "message": "A user promoted!"
+}
+```
+## Delete a user account, only for admin 
 
 ### Endpoint: '/user/public_id'
 
@@ -163,9 +161,11 @@
 
 ### Payload:
 ```json
-"username":"",
-"account_number":"",
-"amount":""
+{
+    "username":"",
+    "amount":,
+    "account_number":""
+}
 ```
 ### Response:
 ```json
@@ -182,9 +182,11 @@
 
 ### Payload:
 ```json
-"username":"",
-"account_number":"",
-"amount":""
+{
+    "username":"",
+    "amount":,
+    "account_number":""
+}
 ```
 ### Response:
 ```json
@@ -201,16 +203,55 @@
 
 ### Payload:
 ```json
-"amount":"",
-"username":"",
-"recipient_account_number": "",
-"recipient_username":"",
-"sender_name":""
+"status":"200"
+{
+    "account_number":"",
+    "amount":,
+    "username":""
+}
 ```
 ### Response:
 ```json
 "status":"200",
 {
-    "Transfer of {amount} to {recipient_account_number} was successful!, your balance is: {new_account_balance}"
+    "Transfer of {amount} to {account_number} was successful!, your balance is: {new_account_balance}"
+}
+```
+## Get transaction details, only for admin
+
+### Endpoint: "/transaction"
+
+### Method: GET
+
+### Response:
+```json
+"status":"200"
+{
+    "Transaction details": [
+        {
+            "amount": ,
+            "created_at": "",
+            "id": 1,
+            "recipient_account_number":"" ,
+            "transaction_type": "",
+            "user_id": 1
+        },
+        {
+            "amount": ,
+            "created_at": "",
+            "id": 2,
+            "recipient_account_number":"" ,
+            "transaction_type": "",
+            "user_id": 
+        },
+        {
+            "amount": ,
+            "created_at": "",
+            "id": 3,
+            "recipient_account_number": "",
+            "transaction_type": "",
+            "user_id": 
+        }
+    ]
 }
 ```
