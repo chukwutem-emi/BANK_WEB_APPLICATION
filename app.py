@@ -174,7 +174,7 @@ def is_admin(public_id):
             if field not in data:
                 abort(400, description=f"Missing required field: {field}")
         hashed_password=generate_password_hash(password=data["password"], method="pbkdf2:sha256")
-        username=str(data["username"])
+        username=str(data["username"]).upper()
         email_address=str(data["email_address"])
         password=hashed_password
         Admin=True
