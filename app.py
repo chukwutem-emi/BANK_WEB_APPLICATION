@@ -13,9 +13,8 @@ from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 
 
-Transaction()
-User()
-
+# Transaction()
+# User()
 
 load_dotenv()
 
@@ -48,6 +47,7 @@ def token_required(f):
 @app.route("/register", methods=["POST"])
 def create_bank_account():
     try:
+        User()
         data=request.get_json()
         if not data:
             abort(400, description=f"Invalid input")
@@ -81,6 +81,7 @@ def create_bank_account():
 @app.route("/user/<public_id>", methods=["GET"])
 @token_required
 def check_account_details(current_user, public_id):
+    User()
     if not current_user:
         return({"message": "Unauthorized!. login required"}), 401
     with db.engine.connect() as connection:
@@ -96,6 +97,7 @@ def check_account_details(current_user, public_id):
 @app.route("/user", methods=["GET"])
 @token_required
 def get_all_bank_account_users(current_user):
+    User()
     if not current_user.Admin:
         return({"message": "Unauthorized!"}), 401
     with db.engine.connect() as connection:
@@ -118,6 +120,7 @@ def get_all_bank_account_users(current_user):
 @app.route("/transaction", methods=["GET"])
 @token_required
 def get_transaction_details(current_user):
+    Transaction()
     if not current_user.Admin:
         return({"message":"Unauthorized!"}), 401
     with db.engine.connect() as connection:
@@ -134,6 +137,7 @@ def get_transaction_details(current_user):
 @token_required
 def update_bank_user_account_details(current_user, public_id):
     try:
+        User()
         if not current_user:
             return({"message": "You can't perform this operation!"}), 401
         data=request.get_json()
@@ -166,6 +170,7 @@ def update_bank_user_account_details(current_user, public_id):
 @app.route("/admin/<public_id>", methods=["PUT"])
 def is_admin(public_id):
     try:
+        User()
         data=request.get_json()
         if not data:
             abort(400, description=f"Invalid input!")
@@ -198,6 +203,7 @@ def is_admin(public_id):
 @app.route("/user/<public_id>", methods=["DELETE"])
 @token_required
 def delete_user_account(current_user, public_id):
+    User()
     if not current_user.Admin:
         return({"message": "Unauthorized!"}), 401
     with db.engine.connect() as connection:
@@ -212,6 +218,7 @@ def delete_user_account(current_user, public_id):
 @app.route("/login", methods=["POST"])
 def login():
     try:
+        User()
         data=request.get_json()
         if not data or not data.get("username") or not data.get("password"):
             return({"message":"Invalid input!"}), 400
@@ -245,6 +252,8 @@ def login():
 @token_required
 def deposit_money(current_user):
     try:
+        User()
+        Transaction()
         if not current_user:
             return({"message": "unauthorized!, Login required"}), 401
         data=request.get_json()
@@ -289,6 +298,8 @@ def deposit_money(current_user):
 @token_required
 def withdraw_money(current_user):
     try:
+        User()
+        Transaction()
         if not current_user:
             return({"message": "Unauthorized!. Login required"}), 401
         data=request.get_json()
@@ -335,6 +346,8 @@ def withdraw_money(current_user):
 @token_required
 def transfer_money(current_user):
     try:
+        User()
+        Transaction()
         if not current_user:
             return({"message": "Unauthorized!. Login required"}), 401
         data=request.get_json()
