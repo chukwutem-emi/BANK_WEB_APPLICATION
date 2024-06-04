@@ -13,9 +13,6 @@ from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
 
 
-# Transaction()
-# User()
-
 load_dotenv()
 
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
