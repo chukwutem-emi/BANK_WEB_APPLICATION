@@ -1,4 +1,4 @@
-
+from flask_cors import CORS
 from flask_file import app
 from model_file import Transaction, User, db, TransactionTypeEnum
 import os
@@ -14,7 +14,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 load_dotenv()
-
+CORS(app)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 def token_required(f):
