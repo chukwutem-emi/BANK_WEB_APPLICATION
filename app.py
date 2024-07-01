@@ -14,6 +14,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 load_dotenv()
+
 CORS(app)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
@@ -66,13 +67,13 @@ def create_bank_account():
                 connection.commit()
                 return({"message": "Account created successfully!"}), 201
     except KeyError as k:
-        abort(400, description=f"Missing data: {str(k)}")
+        abort(400, description=f"Missing data, Key is missing: {str(k)}")
     except ValueError as v:
-        abort(400, description=f"Invalid data: {str(v)}")
+        abort(400, description=f"Invalid data, there is an error in your input: {str(v)}")
     except SQLAlchemyError as s:
-        abort(400, description=f"Database Error: {str(s)}")
+        abort(500, description=f"Database Error: {str(s)}")
     except Exception as e:
-        abort(400, description=f"An Unexpected error as occurred: {str(e)}")
+        abort(400, description=f"An Unexpected error as occurred in the course of your registration: {str(e)}")
 
 
 @app.route("/user/<public_id>", methods=["GET"])
@@ -156,11 +157,11 @@ def update_bank_user_account_details(current_user, public_id):
             connection.commit()
             return({"message":"A bank user account details updated successfully!"}), 200
     except KeyError as k:
-        abort(400, description=f"Missing data: {str(k)}")
+        abort(400, description=f"Missing data, Key error: {str(k)}")
     except ValueError as v:
-        abort(400, description=f"Invalid data: {str(v)}")
+        abort(400, description=f"Invalid data, there's an error your input: {str(v)}")
     except SQLAlchemyError as s:
-        abort(400, description=f"Database error: {str(s)}")
+        abort(500, description=f"Database error, Try again!: {str(s)}")
     except Exception as e:
         abort(400, description=f"An error occurred during update: {str(e)}")
 
@@ -188,11 +189,11 @@ def is_admin(public_id):
             connection.commit()
             return({"message":"A user promoted!"}), 200
     except KeyError as k:
-        abort(400, description=f"Missing data: {str(k)}")
+        abort(400, description=f"Missing data, Key is missing, Cross-check!: {str(k)}")
     except ValueError as v:
-        abort(400, description=f"Invalid data: {str(v)}")
+        abort(400, description=f"Invalid data, The Value you inserted is Invalid!: {str(v)}")
     except SQLAlchemyError as s:
-        abort(400, description=f"Database error: {str(s)}")
+        abort(500, description=f"Database error, Try again: {str(s)}")
     except Exception as e:
         abort(400, description=f"An error has occurred during promotion: {str(e)}")
     
@@ -234,13 +235,13 @@ def login():
         token=jwt.encode({"public_id":user.public_id, "exp":datetime.datetime.now(datetime.UTC)+datetime.timedelta(minutes=60)}, app.config["SECRET_KEY"])
         return({"Token":token}), 200
     except KeyError as k:
-        abort(400, description=f"Missing data: {str(k)}")
+        abort(400, description=f"Missing data, There's no key: {str(k)}")
     except ValueError as v:
-        abort(400, description=f"Invalid data: {str(v)}")
+        abort(400, description=f"Invalid data, Your Inserted the a wrong value: {str(v)}")
     except SQLAlchemyError as s:
-        abort(400, description=f"Database error: {str(s)}")
+        abort(500, description=f"Database error, Try again: {str(s)}")
     except Exception as e:
-        abort(400, description=f"An error occurred during login: {str(e)}")
+        abort(400, description=f"An error occurred during your login: {str(e)}")
 
     
 
@@ -280,13 +281,13 @@ def deposit_money(current_user):
                 connection.commit()
                 return f'deposit of {amount} to {account_number} was successful!, your balance is: {new_account_balance}', 200
     except KeyError as k:
-        abort(400, description=f"Missing data: {str(k)}")
+        abort(400, description=f"Missing data, Remember to check Your Well before Proceeding: {str(k)}")
     except ValueError as V:
-        abort(400, description=f"Invalid data: {str(V)}")
+        abort(400, description=f"Invalid data, Check Your Value Well!: {str(V)}")
     except SQLAlchemyError as s:
-        abort(400, description=f"Database error: {str(s)}")
+        abort(500, description=f"Database error, Try again!: {str(s)}")
     except Exception as e:
-        abort(400, description=f"An error occurred during your transaction: {str(e)}")
+        abort(400, description=f"An error occurred during the course of Your Money Deposit: {str(e)}")
 
 
 
@@ -328,13 +329,13 @@ def withdraw_money(current_user):
                 connection.commit()
                 return f'Withdraw of {amount} by {username} was successful!, your balance is: {new_account_balance}', 200
     except KeyError as k:
-        abort(400, description=f"Missing data: {str(k)}")
+        abort(400, description=f"Missing data, Key Error: {str(k)}")
     except ValueError as V:
-        abort(400, description=f"Invalid data: {str(V)}")
+        abort(400, description=f"Invalid data, Value Error: {str(V)}")
     except SQLAlchemyError as s:
-        abort(400, description=f"Database error: {str(s)}")
+        abort(500, description=f"Database error, Try again, Thank You!: {str(s)}")
     except Exception as e:
-        abort(400, description=f"An error occurred during your transaction: {str(e)}")
+        abort(400, description=f"An error occurred when Trying to Withdraw Money: {str(e)}")
  
 
 
@@ -385,13 +386,13 @@ def transfer_money(current_user):
                 connection.commit()
                 return f'Transfer of {amount} to {account_number} was successful!, your balance is: {new_account_balance}', 200
     except KeyError as k:
-        abort(400, description=f"Missing data: {str(k)}")
+        abort(400, description=f"Missing data, Key Error: {str(k)}")
     except ValueError as V:
-        abort(400, description=f"Invalid data: {str(V)}")
+        abort(400, description=f"Invalid data, There's a Mistake in Your Value: {str(V)}")
     except SQLAlchemyError as s:
-        abort(400, description=f"Database error: {str(s)}")
+        abort(500, description=f"Database error, Try again!: {str(s)}")
     except Exception as e:
-        abort(400, description=f"An error occurred during your transaction: {str(e)}")
+        abort(400, description=f"An error occurred When Trying to Transfer Money, Try again, Thank You!: {str(e)}")
  
 
 
