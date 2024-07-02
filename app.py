@@ -65,7 +65,7 @@ def create_bank_account():
                 create_a_bank_account=t("INSERT INTO user(password, username, email_address, account_number, public_id, account_balance, Admin) VALUES(:password, :username, :email_address, :account_number, :public_id, :account_balance, :Admin)")
                 connection.execute(create_a_bank_account, {"password":password, "username":username, "email_address":email_address, "account_number":account_number, "public_id":public_id, "account_balance":account_balance, "Admin":Admin})
                 connection.commit()
-                return f'"message": "Account created successfully!" your public id is: {public_id}', 201
+                return({"message": "Account created successfully!"}), 201
     except KeyError as k:
         abort(400, description=f"Missing data, Key is missing: {str(k)}")
     except ValueError as v:
