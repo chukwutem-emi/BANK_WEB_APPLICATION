@@ -24,14 +24,18 @@ def token_required(f):
         token = None
         if "A-access-token" in request.headers:
             token=request.headers["A-access-token"]
-            
+            if token.startswith("Bearer "):
+                token = token.split(" ")[1]
+            else:
+                return({"message":"Invalid token prefix"}), 401   
         if not token:
             return({"message": "token is missing!. login to get an access token"}), 401
         try:
             data=jwt.decode(jwt=token, key=app.config["SECRET_KEY"], algorithms=["HS256"])
             current_user=User.query.filter_by(public_id=data["public_id"]).first()
-        except Exception as e:
-            print("Error", e)
+        except jwt.ExpiredSignatureError:
+            return({"message": "Token has expired1"}), 401
+        except jwt.InvalidTokenError:
             return({"message": "invalid token!"}), 401
         
         return f(current_user=current_user, *args, **kwargs)
