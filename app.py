@@ -273,9 +273,9 @@ def deposit_money(current_user):
         with db.engine.connect() as connection:
                 fetching_account_user_details=t("SELECT * FROM user WHERE username=:username AND account_number=:account_number")
                 userData=connection.execute(fetching_account_user_details, {"username":username, "account_number":account_number}).fetchone()
-                user=userData._asdict()
-                if not user:
+                if not userData:
                     return({"message": "Bank account user not found!"}), 404
+                user=userData._asdict()
                 account_balance=float(user["account_balance"])
                 new_account_balance=account_balance + amount
                 updating_account_user=t("UPDATE user SET account_balance=:new_account_balance WHERE username=:username")
@@ -291,7 +291,7 @@ def deposit_money(current_user):
     except SQLAlchemyError as s:
         abort(500, description=f"Database error, Try again!: {str(s)}")
     except Exception as e:
-        abort(400, description=f"An error occurred during the course of Your Money Deposit: {str(e)}")
+        abort(500, description=f"An error occurred during the course of Your Money Deposit: {str(e)}")
 
 
 
