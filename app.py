@@ -283,7 +283,7 @@ def deposit_money(current_user):
                 money_deposit=t("INSERT INTO transaction(amount, user_id, transaction_type, recipient_account_number) VALUES(:amount, :user_id, :transaction_type, :recipient_account_number)")
                 connection.execute(money_deposit, {"amount":amount, "user_id":user["id"], "transaction_type":TransactionTypeEnum.deposit.value, "recipient_account_number":account_number})
                 connection.commit()
-                return({"deposit": f'deposit of {amount}To Your account-number:{account_number} was successful!, {new_account_balance}'}) , 200
+                return({"deposit": "Money deposited successfully!"}), 200
     except KeyError as k:
         abort(400, description=f"Missing data, Remember to check Your Well before Proceeding: {str(k)}")
     except ValueError as V:
@@ -331,7 +331,7 @@ def withdraw_money(current_user):
                 money_withdrawer=t("INSERT INTO transaction(amount, user_id, transaction_type, recipient_account_number) VALUES(:amount, :user_id, :transaction_type, :recipient_account_number)")
                 connection.execute(money_withdrawer, {"amount":amount, "user_id":user["id"], "transaction_type":TransactionTypeEnum.withdraw.value, "recipient_account_number":account_number})
                 connection.commit()
-                return f'Withdraw of {amount} by {username} was successful!, your balance is: {new_account_balance}', 200
+                return({"withdraw":"Money withdrew Successfully!"}), 200
     except KeyError as k:
         abort(400, description=f"Missing data, Key Error: {str(k)}")
     except ValueError as V:
@@ -388,7 +388,7 @@ def transfer_money(current_user):
                 money_transfer=t("INSERT INTO transaction(amount, user_id, transaction_type, recipient_account_number) VALUES(:amount, :user_id, :transaction_type, :recipient_account_number)")
                 connection.execute(money_transfer, {"amount":amount, "user_id":user["id"], "transaction_type":TransactionTypeEnum.transfer.value, "recipient_account_number":account_number})
                 connection.commit()
-                return f'Transfer of {amount} to {account_number} was successful!, your balance is: {new_account_balance}', 200
+                return({"transfer": "Money transferred successfully!"}), 200
     except KeyError as k:
         abort(400, description=f"Missing data, Key Error: {str(k)}")
     except ValueError as V:
