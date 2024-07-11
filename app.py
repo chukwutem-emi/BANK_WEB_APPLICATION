@@ -11,6 +11,7 @@ from sqlalchemy import text as t
 import jwt
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
+import random
 
 
 load_dotenv()
@@ -53,7 +54,7 @@ def create_bank_account():
         data=request.get_json()
         if not data:
             abort(400, description=f"Invalid input")
-        required_fields=["username", "password", "email_address", "account_number"]
+        required_fields=["username", "password", "email_address"]
         for field in required_fields:
             if field not in data:
                 abort(400, description=f"Missing required field: {field}")
@@ -61,7 +62,7 @@ def create_bank_account():
         password=hashed_password
         username=str(data["username"]).upper()
         email_address=str(data["email_address"])
-        account_number=str(data["account_number"])
+        account_number=str(random.randint(0, 9999999999)).zfill(10)
         public_id=str(uuid.uuid4())
         Admin=False
         account_balance=0
@@ -222,17 +223,17 @@ def login():
     try:
         User()
         data=request.get_json()
-        if not data or not data.get("username") or not data.get("password"):
+        if not data or not data.get("email_address") or not data.get("password"):
             return({"message":"Invalid input!"}), 400
-        required_fields=["username", "password"]
+        required_fields=["email_address", "password"]
         for field in required_fields:
             if field not in data:
                 abort(400, description=f"Missing field: {field}")
-        username=str(data["username"]).upper()
+        email_address=str(data["email_address"])
         password=str(data["password"])
         with db.engine.connect() as connection:
-            get_user=t("SELECT * FROM user WHERE username=:username")
-            user_data=connection.execute(get_user, {"username":username})
+            get_user=t("SELECT * FROM user WHERE email_address=:email_address")
+            user_data=connection.execute(get_user, {"email_address":email_address})
             user=user_data.first()
         if not user or not check_password_hash(user.password, password):
             return({"message":"could not verify"})
