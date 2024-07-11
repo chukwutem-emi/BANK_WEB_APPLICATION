@@ -319,9 +319,9 @@ def withdraw_money(current_user):
         with db.engine.connect() as connection:
                 fetching_account_user_details=t("SELECT * FROM user WHERE username=:username AND account_number=:account_number")
                 userData=connection.execute(fetching_account_user_details, {"username":username, "account_number":account_number}).fetchone()
-                user=userData._asdict()
-                if not user:
+                if not userData:
                     return({"message": "Bank account user not found!"}), 404
+                user=userData._asdict()
                 account_balance=float(user["account_balance"])
                 new_account_balance=account_balance - amount
                 if amount > account_balance:
@@ -339,7 +339,7 @@ def withdraw_money(current_user):
     except SQLAlchemyError as s:
         abort(500, description=f"Database error, Try again, Thank You!: {str(s)}")
     except Exception as e:
-        abort(400, description=f"An error occurred when Trying to Withdraw Money: {str(e)}")
+        abort(500, description=f"An error occurred when Trying to Withdraw Money: {str(e)}")
  
 
 
@@ -367,18 +367,18 @@ def transfer_money(current_user):
         with db.engine.connect() as connection:
                 fetching_recipient=t("SELECT * FROM user WHERE account_number=:account_number")
                 recipientData=connection.execute(fetching_recipient, {"account_number":account_number}).fetchone()
-                recipient=recipientData._asdict()
-                if not recipient:
+                if not recipientData:
                     return({"message": "Recipient not found!"}), 404
+                recipient=recipientData._asdict()
                 account_balance=float(recipient["account_balance"])
                 new_recipient_account_balance=account_balance + amount
                 updating_recipient_account=t("UPDATE user SET account_balance=:new_recipient_account_balance WHERE account_number=:account_number")
                 connection.execute(updating_recipient_account, {"new_recipient_account_balance":new_recipient_account_balance, "account_number":account_number})
                 fetching_account_user_details=t("SELECT * FROM user WHERE username=:username")
                 userRow=connection.execute(fetching_account_user_details, {"username":username}).fetchone()
-                user=userRow._asdict()
-                if not user:
+                if not userRow:
                     return({"message": "Bank account user not found!"}), 404
+                user=userRow._asdict()
                 account_balance=float(user["account_balance"])
                 new_account_balance=account_balance - amount
                 if amount > account_balance:
@@ -396,7 +396,7 @@ def transfer_money(current_user):
     except SQLAlchemyError as s:
         abort(500, description=f"Database error, Try again!: {str(s)}")
     except Exception as e:
-        abort(400, description=f"An error occurred When Trying to Transfer Money, Try again, Thank You!: {str(e)}")
+        abort(500, description=f"An error occurred When Trying to Transfer Money, Try again, Thank You!: {str(e)}")
  
 
 
