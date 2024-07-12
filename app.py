@@ -262,18 +262,17 @@ def deposit_money(current_user):
         data=request.get_json()
         if not data:
             abort(400, description="Invalid input")
-        required_fields=["username", "amount", "account_number"]
+        required_fields=["username", "amount"]
         for field in required_fields:
             if field not in data:
                 abort(400, description=f"Missing required field: {field}")
         username=str(data["username"]).upper()
-        account_number=str(data["account_number"])
         amount=float(data["amount"])
         if not username or not amount:
-            return({"message": "username, account_number and amount are required!"}), 400
+            return({"message": "username, and amount are required!"}), 400
         with db.engine.connect() as connection:
-                fetching_account_user_details=t("SELECT * FROM user WHERE username=:username AND account_number=:account_number")
-                userData=connection.execute(fetching_account_user_details, {"username":username, "account_number":account_number}).fetchone()
+                fetching_account_user_details=t("SELECT * FROM user WHERE username=:username")
+                userData=connection.execute(fetching_account_user_details, {"username":username}).fetchone()
                 if not userData:
                     return({"message": "Bank account user not found!"}), 404
                 user=userData._asdict()
@@ -282,7 +281,7 @@ def deposit_money(current_user):
                 updating_account_user=t("UPDATE user SET account_balance=:new_account_balance WHERE username=:username")
                 connection.execute(updating_account_user, {"new_account_balance":new_account_balance, "username":username})
                 money_deposit=t("INSERT INTO transaction(amount, user_id, transaction_type, recipient_account_number) VALUES(:amount, :user_id, :transaction_type, :recipient_account_number)")
-                connection.execute(money_deposit, {"amount":amount, "user_id":user["id"], "transaction_type":TransactionTypeEnum.deposit.value, "recipient_account_number":account_number})
+                connection.execute(money_deposit, {"amount":amount, "user_id":user["id"], "transaction_type":TransactionTypeEnum.deposit.value, "recipient_account_number":user["account_number"]})
                 connection.commit()
                 return({"deposit": "Money deposited successfully!"}), 200
     except KeyError as k:
@@ -308,18 +307,17 @@ def withdraw_money(current_user):
         data=request.get_json()
         if not data:
             abort(400, description="Invalid input")
-        required_fields=["username", "account_number", "amount"]
+        required_fields=["username", "amount"]
         for field in required_fields:
             if field not in data:
                 abort(400, description=f'Missing required field: {field}')
         username=str(data["username"]).upper()
-        account_number=str(data["account_number"])
         amount=float(data["amount"])
-        if not username or not amount or not account_number:
-            return({"message": "username, account_number and amount are required!"}), 400
+        if not username or not amount:
+            return({"message": "username, and amount are required!"}), 400
         with db.engine.connect() as connection:
-                fetching_account_user_details=t("SELECT * FROM user WHERE username=:username AND account_number=:account_number")
-                userData=connection.execute(fetching_account_user_details, {"username":username, "account_number":account_number}).fetchone()
+                fetching_account_user_details=t("SELECT * FROM user WHERE username=:username")
+                userData=connection.execute(fetching_account_user_details, {"username":username}).fetchone()
                 if not userData:
                     return({"message": "Bank account user not found!"}), 404
                 user=userData._asdict()
@@ -330,7 +328,7 @@ def withdraw_money(current_user):
                 updating_account_user=t("UPDATE user SET account_balance=:new_account_balance WHERE username=:username")
                 connection.execute(updating_account_user, {"new_account_balance":new_account_balance, "username":username})
                 money_withdrawer=t("INSERT INTO transaction(amount, user_id, transaction_type, recipient_account_number) VALUES(:amount, :user_id, :transaction_type, :recipient_account_number)")
-                connection.execute(money_withdrawer, {"amount":amount, "user_id":user["id"], "transaction_type":TransactionTypeEnum.withdraw.value, "recipient_account_number":account_number})
+                connection.execute(money_withdrawer, {"amount":amount, "user_id":user["id"], "transaction_type":TransactionTypeEnum.withdraw.value, "recipient_account_number":user["account_number"]})
                 connection.commit()
                 return({"withdraw":"Money withdrew Successfully!"}), 200
     except KeyError as k:
