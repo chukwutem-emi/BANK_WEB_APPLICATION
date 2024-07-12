@@ -324,7 +324,7 @@ def withdraw_money(current_user):
                 account_balance=float(user["account_balance"])
                 new_account_balance=account_balance - amount
                 if amount > account_balance:
-                    return({"message":"Insufficient fund!"}), 400
+                    return({"insufficient":"Insufficient fund!"}), 400
                 updating_account_user=t("UPDATE user SET account_balance=:new_account_balance WHERE username=:username")
                 connection.execute(updating_account_user, {"new_account_balance":new_account_balance, "username":username})
                 money_withdrawer=t("INSERT INTO transaction(amount, user_id, transaction_type, recipient_account_number) VALUES(:amount, :user_id, :transaction_type, :recipient_account_number)")
