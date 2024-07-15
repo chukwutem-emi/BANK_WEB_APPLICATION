@@ -136,9 +136,9 @@ def get_transaction_details(current_user):
     
     
 
-@app.route("/user/<public_id>", methods=["PUT"])
+@app.route("/update", methods=["PUT"])
 @token_required
-def update_bank_user_account_details(current_user, public_id):
+def update_bank_user_account_details(current_user):
     try:
         User()
         if not current_user:
@@ -155,8 +155,8 @@ def update_bank_user_account_details(current_user, public_id):
         email_address=str(data["email_address"])
         password=hashed_password
         with db.engine.connect() as connection:
-            a_bank_user_account_details=t("UPDATE user SET username=:username, email_address=:email_address, password=:password WHERE public_id=:public_id")
-            user=connection.execute(a_bank_user_account_details, {"username":username, "email_address":email_address, "password":password, "public_id":public_id})
+            a_bank_user_account_details=t("UPDATE user SET username=:username, email_address=:email_address, password=:password")
+            user=connection.execute(a_bank_user_account_details, {"username":username, "email_address":email_address, "password":password})
             if not user:
                 return({"message":"you can't perform this operation!"}), 404
             connection.commit()
@@ -168,7 +168,7 @@ def update_bank_user_account_details(current_user, public_id):
     except SQLAlchemyError as s:
         abort(500, description=f"Database error, Try again!: {str(s)}")
     except Exception as e:
-        abort(400, description=f"An error occurred during update: {str(e)}")
+        abort(500, description=f"An error occurred during update: {str(e)}")
 
 @app.route("/admin/<public_id>", methods=["PUT"])
 def is_admin(public_id):
