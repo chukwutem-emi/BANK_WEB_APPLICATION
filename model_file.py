@@ -30,7 +30,7 @@ class User(db.Model):
     account_balance=db.Column(db.Float)
     Admin=db.Column(Boolean, default=False)
     created_at=db.Column(DateTime(timezone=True), server_default=func.now())
-    updated_at=db.Column(DateTime(timezone=True), server_default=func.now())
+    updated_at=db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
     def __repr__(self):
