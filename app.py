@@ -160,7 +160,7 @@ def update_bank_user_account_details(current_user):
             if not user:
                 return({"message":"you can't perform this operation!"}), 404
             connection.commit()
-            return({"message":"A bank user account details updated successfully!"}), 200
+            return({"update":"A bank user account details updated successfully!"}), 200
     except KeyError as k:
         abort(400, description=f"Missing data, Key error: {str(k)}")
     except ValueError as v:
