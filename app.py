@@ -142,7 +142,7 @@ def update_bank_user_account_details(current_user):
     try:
         User()
         if not current_user:
-            return({"message": "You can't perform this operation!"}), 401
+            return({"error": "You can't perform this operation!"}), 401
         data=request.get_json()
         if not data:
             abort(400, description="Invalid input")
