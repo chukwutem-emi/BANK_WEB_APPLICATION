@@ -190,7 +190,7 @@ def is_admin(public_id):
             promote_user=t("UPDATE user SET username=:username, email_address=:email_address, password=:password, Admin=:Admin WHERE public_id=:public_id")
             user=connection.execute(promote_user, {"username":username, "email_address":email_address, "password":password, "Admin":Admin, "public_id":public_id})
             if not user:
-                return({"message":"user not found!"}), 404
+                return({"error":"user not found!"}), 404
             connection.commit()
             return({"message":"A user promoted!"}), 200
     except KeyError as k:
