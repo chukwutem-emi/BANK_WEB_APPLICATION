@@ -81,16 +81,16 @@ def create_bank_account():
         abort(400, description=f"An Unexpected error as occurred in the course of your registration: {str(e)}")
 
 
-@app.route("/user", methods=["GET"])
+@app.route("/user/current_user", methods=["GET"])
 @token_required
 def check_account_details(current_user):
     User()
     if not current_user:
         return({"message": "Unauthorized!. login required"}), 401
     with db.engine.connect() as connection:
-        account_details=t("SELECT * FROM user")
-        user_data=connection.execute(account_details)
-        user=user_data.fetchone()
+        account_details=t("SELECT * FROM user WHERE current_user=:current_user")
+        user_data=connection.execute(account_details, {"current_user":current_user})
+        user=user_data.first()
         if not user:
             return({"message": "user not found!"}), 404
         user_dict= user._asdict()
