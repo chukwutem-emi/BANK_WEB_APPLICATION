@@ -94,7 +94,8 @@ def check_account_details(current_user):
         "public_id":current_user.public_id,
         "account_number":current_user.account_number,
         "account_balance":current_user.account_balance,
-        "Admin":current_user.Admin
+        "Admin":current_user.Admin,
+        "created_at":current_user.created_at
     }
     return({"user":user_dict}), 200
     
