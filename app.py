@@ -330,7 +330,7 @@ def withdraw_money(current_user):
             money_withdrawer=t("INSERT INTO transaction(amount, user_id, transaction_type, recipient_account_number) VALUES(:amount, :user_id, :transaction_type, :recipient_account_number)")
             connection.execute(money_withdrawer, {"amount":amount, "user_id":user["id"], "transaction_type":TransactionTypeEnum.withdraw.value, "recipient_account_number":user["account_number"]})
             connection.commit()
-            return({"withdraw":"Money withdrew Successfully!"}), 200
+            return({"withdraw":"Money withdrawn Successfully!"}), 200
     except KeyError as k:
         abort(400, description=f"Missing data, Key Error: {str(k)}")
     except ValueError as V:
