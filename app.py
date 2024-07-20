@@ -87,14 +87,16 @@ def check_account_details(current_user):
     User()
     if not current_user:
         return({"message": "Unauthorized!. login required"}), 401
-    with db.engine.connect() as connection:
-        account_details=t("SELECT * FROM user")
-        user_data=connection.execute(account_details)
-        user=user_data.first()
-        if not user:
-            return({"message": "user not found!"}), 404
-        user_dict= user._asdict()
-        return({"user":user_dict}), 200
+    user_dict = {
+        "username":current_user.username,
+        "email_address": current_user.email_address,
+        "password":current_user.password,
+        "public_id":current_user.public_id,
+        "account_number":current_user.account_number,
+        "account_balance":current_user.account_balance,
+        "Admin":current_user.Admin
+    }
+    return({"user":user_dict}), 200
     
   
 @app.route("/users", methods=["GET"])
