@@ -158,8 +158,8 @@ def update_bank_user_account_details(current_user):
         email_address=str(data["email_address"])
         password=hashed_password
         with db.engine.connect() as connection:
-            a_bank_user_account_details=t("UPDATE user SET username=:username, email_address=:email_address, password=:password")
-            user=connection.execute(a_bank_user_account_details, {"username":username, "email_address":email_address, "password":password})
+            a_bank_user_account_details=t("UPDATE user SET username=:username, email_address=:email_address, password=:password WHERE public_id=:public_id")
+            user=connection.execute(a_bank_user_account_details, {"username":username, "email_address":email_address, "password":password, "public_id":current_user.public_id})
             if not user:
                 return({"message":"you can't perform this operation!"}), 404
             connection.commit()
